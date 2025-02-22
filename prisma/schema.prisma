@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// user model 
+enum UserRole {
+  USER
+  ADMIN
+  SUPER
+}
+
+model Role {
+  id    Int      @id @default(autoincrement())
+  name  UserRole @unique
+  users User[]
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  name       String
+  email      String    @unique
+  password   String
+  image      String?
+  roleId     Int
+  role       Role      @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  address    Address[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
+}
+
+model Address {
+  id           Int     @id @default(autoincrement())
+  city         String
+  block        String
+  post_office  String
+  country      String
+  landmark     String?
+  pin_code     String
+  mobileNumber String  @default("")
+  User         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       Int
+}
+
+model Product {
+  id            Int          @id @default(autoincrement())
+  name          String
+  image         String
+  price         Float        @default(0.0)
+  description   String
+  stock         Int
+  attribute     String
+  isActive      Boolean
+  category      Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId    Int
+  subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
+  subcategoryId Int?
+  sellerId      Int?
+}
+
+model Category {
+  id          Int           @id @default(autoincrement())
+  name        String
+  Product     Product[]
+  Subcategory Subcategory[]
+}
+
+model Subcategory {
+  id         Int       @id @default(autoincrement())
+  name       String
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId Int
+  Product    Product[]
+}
