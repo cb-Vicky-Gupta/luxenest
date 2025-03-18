@@ -16,6 +16,12 @@ export async function DELETE(
     }
     let userData: User;
     userData = JSON.parse(sellerData) as User;
+    const res = await prisma.product.findUnique({
+      where: { id: productId, sellerId: userData.id },
+    });
+    if (!res) {
+      return NextResponse.json({ status: 404, msg: "Product not found" });
+    }
     await prisma.product.delete({
       where: { id: productId, sellerId: userData.id },
     });

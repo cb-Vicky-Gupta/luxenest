@@ -21,14 +21,15 @@ export async function POST(req: Request) {
       status: 400,
     });
   }
-
+  const findRole = await prisma.role.findUnique({where : { id : matchEmail.roleId}})
   const userData = {
     email: matchEmail.email,
-    roleId: matchEmail.roleId,
+    roleId: findRole,
     name: matchEmail.name,
     image: matchEmail.image,
     id: matchEmail.id,
   };
+  
   const token = jwt.sign(userData, process.env.JWT_SECRET as string);
   return NextResponse.json({
     msg: "User Logged-in Successfully",

@@ -66,6 +66,7 @@ model Product {
   subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id], onDelete: Cascade)
   subcategoryId Int?
   sellerId      Int?
+  createdAt     DateTime     @default(now())
 }
 
 model Category {
