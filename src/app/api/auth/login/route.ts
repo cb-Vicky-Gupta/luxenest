@@ -1,3 +1,4 @@
+import { LoginResponse } from "@/interface";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -31,10 +32,19 @@ export async function POST(req: Request) {
   };
   
   const token = jwt.sign(userData, process.env.JWT_SECRET as string);
-  return NextResponse.json({
+  const res =  NextResponse.json({
     msg: "User Logged-in Successfully",
     data: userData,
     token: token,
     status: 200,
   });
+
+res.cookies.set("token", token, {
+  httpOnly: true,
+  secure: process.env.NEXT_PUBLIC_SECURE_CODE === "production",
+  maxAge: 60 * 60 * 24 * 7,
+  path: "/",
+});
+
+return res;
 }
