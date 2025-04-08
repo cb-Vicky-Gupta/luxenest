@@ -5,7 +5,7 @@ export async function GET() {
   try {
     const roles = await prisma.role.findMany({
       where: {
-        id: { not: 3 },
+        id: { not: 1 },
       },
     });
 

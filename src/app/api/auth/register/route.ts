@@ -13,7 +13,7 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-    if (roleId === 3) {
+    if (roleId === 1) {
       return NextResponse.json({
         status: 401,
         msg: "You can't register with super admin role",

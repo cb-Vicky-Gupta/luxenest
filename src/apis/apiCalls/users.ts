@@ -6,3 +6,4 @@ export const authLogin = async(data: any)=>{
 export const authRegister = async(data: any)=>{
     return await makeApiRequest("POST", urls.API_URLS.REGISTER, data,  )
 }
+

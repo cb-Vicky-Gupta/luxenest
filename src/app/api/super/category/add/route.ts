@@ -10,7 +10,7 @@ interface User {
 }
 export async function POST(req: Request) {
   try {
-    const { name } = await req.json();
+    const { name, image } = await req.json();
     const superAdminData = req.headers.get("user-data");
     if (!superAdminData) {
       return NextResponse.json(
@@ -44,7 +44,10 @@ export async function POST(req: Request) {
     const productData = await prisma.category.create({
       data: {
         name,
+        image
+
       },
+
     });
     return NextResponse.json({
       status: 201,

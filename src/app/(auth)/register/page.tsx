@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { avatarLinks } from '@/lib/avatars';
 import Image from 'next/image';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import React, { ChangeEvent, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -19,7 +20,7 @@ const Register = () => {
     name: "",
     email : "",
     image: "",
-    roleId: 1,
+    roleId: 3,
     password : ""
   })
   const handleChange = (e: ChangeEvent<HTMLInputElement>, name: string) => {
@@ -27,10 +28,12 @@ const Register = () => {
     };
    const handleSubmit = async () => {
     let _state = {...state, image : selectedAvatar}
+    console.log(_state)
       try {
         const res = await authRegister(_state);
         console.log(res)
         if(res){
+          redirect('/login')
           toast("Register successfully")
         }
       } catch (error) {
