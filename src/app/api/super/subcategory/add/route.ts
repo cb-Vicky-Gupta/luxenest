@@ -27,7 +27,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ msg: "Invalid user data", status: 400 });
     }
     const existingUser = await prisma.user.findUnique({
-      where: { id: userData.id, roleId: 3 },
+      where: { id: userData.id, roleId: 1 },
     });
 
     if (!existingUser) {

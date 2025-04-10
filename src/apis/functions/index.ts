@@ -1,5 +1,5 @@
 import axios, {  AxiosResponse, RawAxiosRequestHeaders } from "axios";
-
+import Cookies from "js-cookie"; 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL  
 console.log(baseUrl)
 const api = axios.create({
@@ -15,7 +15,7 @@ export const makeApiRequest = async <T>(
   data?: any,
   additionalHeaders: RawAxiosRequestHeaders = {}
 ): Promise<T> => {
-  const token = localStorage.getItem("token");
+  const token = Cookies.get("token");
 
   if (typeof additionalHeaders !== "object" || additionalHeaders === null) {
     throw new Error("additionalHeaders should be an object");

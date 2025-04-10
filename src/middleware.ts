@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { jwtVerify } from "jose"; // Use jose for JWT verification
+import { jwtVerify } from "jose"; 
+import { cookies } from "next/headers";
 import { LoginResponse } from "./interface";
 interface JwtPayload {
   email: string;
@@ -22,7 +23,7 @@ export async function middleware(req: NextRequest) {
     req.headers.get("Authorization")?.split(" ")[1];
 
   // Debug: Log the token received
-
+  console.log(token)
   if (!token) {
     return NextResponse.json(
       { msg: "Unauthorized - No Token Provided" },
@@ -39,6 +40,9 @@ export async function middleware(req: NextRequest) {
 
     if (pathname.startsWith("/seller") && userPayload.roleId.name !== "ADMIN") {
       return NextResponse.redirect(new URL("/seller-only", req.url));
+    }
+    else if (pathname.startsWith("/super-admin") && userPayload.roleId.name !=="SUPER"){
+      return NextResponse.redirect(new URL("/login", req.url));
     }
     // Set user data in headers
     const res = NextResponse.next();

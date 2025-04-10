@@ -1,3 +1,5 @@
+import { JSX } from "react/jsx-runtime";
+
 export interface User {
   name: string;
   id: number;
@@ -24,4 +26,27 @@ export interface LoginResponse {
   data: LoginUserData;
   token: string;
   status: number;
+}
+
+export interface ICategoryRow {
+  sNo: number;
+  categoryName: string;
+  image: JSX.Element;
+  actions: JSX.Element;
+}
+
+export interface ICategory {
+  id: number;
+  name: string;
+  image: string;
+}
+
+export interface CategoryType {
+  id: number;
+  name: string;
+  image: string;
+}
+
+export interface GetCategoryResponse {
+  data: CategoryType[];
 }

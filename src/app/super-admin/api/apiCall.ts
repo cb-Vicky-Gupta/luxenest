@@ -1,6 +1,7 @@
 import { makeApiRequest } from "@/apis/functions"
 import * as urls from '@/app/super-admin/api/urls'
 import * as common from '@/apis/urls/index'
+import { GetCategoryResponse } from "@/interface"
 //category
 export const addCategory = async(data: any)=>{
     return await makeApiRequest("POST", urls.ADD_CATEGORY, data,  )
@@ -11,8 +12,8 @@ export const updateCategory = async(data: any,id:number)=>{
 export const deleteCategory = async(data: any,id:number)=>{
     return await makeApiRequest("POST", urls.DELETE_CATEGORY+{id}, data,  )
 }
-export const getCategory = async(data: any)=>{
-    return await makeApiRequest("POST", common.API_URLS.GET_CATEGORY, data,  )
+export const getCategory = async(): Promise<GetCategoryResponse>=>{
+    return await makeApiRequest("GET", common.API_URLS.GET_CATEGORY,  )
 }
 export const getCategoryById = async(data: any,id:number)=>{
     return await makeApiRequest("POST", common.API_URLS.GET_CATEGORY_BY_ID, data,  )
