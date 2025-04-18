@@ -16,7 +16,7 @@ export const makeApiRequest = async <T>(
   additionalHeaders: RawAxiosRequestHeaders = {}
 ): Promise<T> => {
   const token = Cookies.get("token");
-
+  console.log(token)
   if (typeof additionalHeaders !== "object" || additionalHeaders === null) {
     throw new Error("additionalHeaders should be an object");
   }

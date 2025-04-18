@@ -69,5 +69,6 @@ export const config = {
 
     //frontend routes
      "/seller/:path*",
+     "/super-admin/:path*"
   ],
 };

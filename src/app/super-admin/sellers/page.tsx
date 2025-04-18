@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { getUsersList } from "../api/apiCall";
 import { columns } from "./data";
 
-const SuperSellers = () => {
+const SuperSellers = ({isUser}:{isUser:boolean}) => {
   const [sellers, setSellers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,7 +29,6 @@ const SuperSellers = () => {
     email: "",
     password: "",
   });
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: string
@@ -44,11 +43,10 @@ const SuperSellers = () => {
         page: 1,
         limit: 10,
         search: "",
-        roleId: 2,
+        roleId: isUser ? 3 : 2,
       };
 
       const res = await getUsersList(payload);
-      console.log(res?.data)
       if (res?.data) {
         const formatted = res.data.map((s: any, i: number) => ({
           sNo: i + 1,
@@ -116,18 +114,24 @@ const SuperSellers = () => {
 
   return (
     <div className="px-6">
+
       <Dialog>
         <div className="flex justify-between mt-6 mb-4">
-          <p className="font-bold text-lg">Sellers</p>
+          <p className="font-bold text-lg">{isUser ? "Users" : "Sellers"}</p>
+          {
+            !isUser && 
           <DialogTrigger asChild>
             <Button className="bg-yellow-400 text-black hover:bg-yellow-500">
               <Plus size={18} className="mr-2" />
               Add Seller
             </Button>
           </DialogTrigger>
+}
         </div>
 
         <DialogContent className="sm:max-w-[500px]">
+          
+          
           <DialogHeader>
             <DialogTitle>Add Seller</DialogTitle>
             <DialogDescription>Fill in seller details</DialogDescription>

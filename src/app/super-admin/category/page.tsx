@@ -15,18 +15,22 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Plus, Pencil, Trash2 } from "lucide-react";
-import { columns } from "./data";
+import { columns, subColumns } from "./data";
 import { useCloudinaryUpload } from "@/app/hooks/useCloudinaryUpload";
 import { CldImage } from "next-cloudinary";
-import { addCategory, getCategory } from "../api/apiCall";
+import { addCategory, addSubCategory, getCategory, getSubCategory } from "../api/apiCall";
 import { GetCategoryResponse } from "@/interface";
 import { Loader2 } from "lucide-react"; // ✅ Optional: Lucide spinner icon
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const SuperCategory = () => {
+const SuperCategory = ({isSubCat}:{isSubCat:boolean}) => {
   const [page, setPage] = useState(1);
   const [state, setState] = useState({ name: "", image: "" });
   const [category, setCategory] = useState<any[]>([]);
+  const [subCategory, setSubCategory] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [categoryOption, setCategoryOption] = useState<any[]>([])
+  const [addCat, setAddCat]= useState("")
   const { uploadImage, uploading, publicId } = useCloudinaryUpload();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,6 +89,10 @@ const SuperCategory = () => {
             </div>
           ),
         }));
+        setCategoryOption(res?.data.map((d)=>({
+          label : d?.name,
+          value: d?.id
+        })))
         setCategory(rows);
       }
     } catch (error) {
@@ -93,6 +101,39 @@ const SuperCategory = () => {
       setLoading(false);
     }
   };
+  const fetchSubCategory = async ()=>{
+    try {
+      const res = await getSubCategory()
+      if (res?.data) {
+        const rows = res.data.map((d, index: number) => ({
+          sNo: index + 1,
+          subCategoryName: d.name,
+          category : d?.category?.name,
+          actions: (
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleEdit(d.id)}
+              >
+                <Pencil size={16} />
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => handleDelete(d.id)}
+              >
+                <Trash2 size={16} />
+              </Button>
+            </div>
+          ),
+        }));
+        setSubCategory(rows);
+      }
+    } catch (error) {
+      
+    }
+  }
 
   const addCategoryDB = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,48 +141,79 @@ const SuperCategory = () => {
     setState({ name: "", image: "" });
     fetchCategory();
   };
+const addSubCatDB = async(e:React.FormEvent)=>{
+  e.preventDefault()
 
+  const res = await addSubCategory({
+    "name": state.name,
+    "categoryId": parseInt(addCat)
+})
+fetchSubCategory()
+}
   useEffect(() => {
+    
+    isSubCat && fetchSubCategory() 
     fetchCategory();
   }, []);
-
+console.log(categoryOption)
   return (
     <div className="px-6">
       <Dialog>
         <div className="flex justify-between mt-6 mb-4">
-          <div className="flex items-center gap-4">
-            <p className="font-bold text-lg">Category</p>
-            <Input placeholder="Search Category" />
+          <div className="flex items-center ">
+            <p className="font-bold text-lg w-full">{isSubCat ? "Sub-Category": "Category"}</p>
+            <Input placeholder={isSubCat ? "Search Sub-Category": "Search Category"} />
           </div>
           <DialogTrigger asChild>
             <Button className="bg-yellow-400 text-black hover:bg-yellow-500">
-              <Plus className="mr-2" size={18} />
-              Add Category
+              <Plus size={18} />
             </Button>
           </DialogTrigger>
         </div>
 
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Add Category</DialogTitle>
+            <DialogTitle>Add {isSubCat && "Sub-"}Category</DialogTitle>
             <DialogDescription>
-              Fill in the details to add a new category.
+              Fill in the details to add a new {isSubCat &&"sub-"}category.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={addCategoryDB}>
+          <form onSubmit={isSubCat ? addSubCatDB :addCategoryDB}>
             <div className="space-y-4 py-2">
               <div>
                 <Label htmlFor="categoryName">
                   Name<span className="text-red-500">*</span>
                 </Label>
                 <Input
-                  id="categoryName"
-                  placeholder="Enter Category Name"
+                  id={isSubCat ? "subCategory":"categoryName"}
+                  placeholder={`Enter ${isSubCat &&"Sub-"}Category Name`}
+                  name="name"
                   value={state.name}
                   onChange={(e) => setState({ ...state, name: e.target.value })}
                 />
               </div>
-
+{isSubCat? 
+ <div>
+ <Label htmlFor="categoryName">
+   Select Category<span className="text-red-500">*</span>
+ </Label>
+ <Select onValueChange={(value) => setAddCat(value)}>
+  <SelectTrigger>
+    <SelectValue placeholder="Select Category" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectGroup>
+      <SelectLabel>Category</SelectLabel>
+      {categoryOption?.map((d) => (
+        <SelectItem key={d?.value} value={d?.value.toString()}>
+          {d?.label}
+        </SelectItem>
+      ))}
+    </SelectGroup>
+  </SelectContent>
+</Select>
+</div>
+:
               <div>
                 <Label htmlFor="categoryImage">
                   Image<span className="text-red-500">*</span>
@@ -163,7 +235,7 @@ const SuperCategory = () => {
                     />
                   </div>
                 )}
-              </div>
+              </div>}
             </div>
             <DialogFooter>
               <Button type="submit">Add</Button>
@@ -174,10 +246,10 @@ const SuperCategory = () => {
       {loading ? (
         <div className="flex justify-center items-center h-40">
           <Loader2 className="animate-spin mr-2 h-6 w-6 text-gray-500" />
-          <span className="text-gray-600">Loading categories...</span>
+          <span className="text-gray-600">Loading {isSubCat &&"sub-"}categories...</span>
         </div>
       ) : (
-        <CustomTable columns={columns} data={category} />
+        <CustomTable columns={isSubCat ? subColumns :columns} data={isSubCat ?subCategory: category} />
       )}
     </div>
   );

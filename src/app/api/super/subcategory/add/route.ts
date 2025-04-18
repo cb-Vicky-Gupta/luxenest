@@ -11,8 +11,8 @@ interface User {
 export async function POST(req: Request) {
   try {
     const { name, categoryId } = await req.json();
-    const syperAdminData = req.headers.get("user-data");
-    if (!syperAdminData) {
+    const superAdminData = req.headers.get("user-data");
+    if (!superAdminData) {
       return NextResponse.json(
         {
           msg: "You are not authorized to add sub-category",
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     }
     let userData: User;
     try {
-      userData = JSON.parse(syperAdminData) as User;
+      userData = JSON.parse(superAdminData) as User;
     } catch (error) {
       return NextResponse.json({ msg: "Invalid user data", status: 400 });
     }

@@ -9,6 +9,7 @@ import React from 'react';
 const navLinks = [
   { name: "Overview", path: "/super-admin/dashboard" },
   { name: "Category", path: "/super-admin/category" },
+  { name: "Sub-Category", path: "/super-admin/sub-category" },
   // { name: "Products", path: "/super-admin/products" },
   // { name: "Orders", path: "/super-admin/orders" },
   { name: "Sellers", path: "/super-admin/sellers" },

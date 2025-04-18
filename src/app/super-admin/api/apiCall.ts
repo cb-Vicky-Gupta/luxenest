@@ -39,8 +39,8 @@ export const updateSubCategory = async (data: any, id: number) => {
 export const deleteSubCategory = async (data: any, id: number) => {
   return await makeApiRequest("POST", urls.DELETE_SUB_CATEGORY + { id }, data);
 };
-export const getSubCategory = async (data: any) => {
-  return await makeApiRequest("POST", common.API_URLS.GET_SUB_CATEGORY, data);
+export const getSubCategory = async () => {
+  return await makeApiRequest("GET", common.API_URLS.GET_SUB_CATEGORY, );
 };
 export const getSubCategoryById = async (data: any, id: number) => {
   return await makeApiRequest(

@@ -23,7 +23,8 @@ const Login = () => {
       const res = await authLogin(state);
       console.log(res)
       if(res){
-        toast("Loggedin successfully")
+
+        toast(res?.msg)
       }
     } catch (error) {
       console.error("Login failed:", error);
