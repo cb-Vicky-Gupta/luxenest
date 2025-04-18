@@ -20,11 +20,13 @@ import { useCloudinaryUpload } from "@/app/hooks/useCloudinaryUpload";
 import { CldImage } from "next-cloudinary";
 import { addCategory, getCategory } from "../api/apiCall";
 import { GetCategoryResponse } from "@/interface";
+import { Loader2 } from "lucide-react"; // ✅ Optional: Lucide spinner icon
 
 const SuperCategory = () => {
   const [page, setPage] = useState(1);
   const [state, setState] = useState({ name: "", image: "" });
   const [category, setCategory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const { uploadImage, uploading, publicId } = useCloudinaryUpload();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,38 +46,51 @@ const SuperCategory = () => {
 
   const handleEdit = (id: number) => {
     console.log("Edit clicked for ID:", id);
-    // open edit modal and load data
   };
 
   const fetchCategory = async () => {
     try {
+      setLoading(true);
       const res = await getCategory();
-
       if (res?.data) {
-        const rows= res.data.map((d, index: number) => ({
+        const rows = res.data.map((d, index: number) => ({
           sNo: index + 1,
           categoryName: d.name,
           image: (
-            <a href={d.image} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+            <a
+              href={d.image}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 underline"
+            >
               View
             </a>
           ),
           actions: (
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={() => handleEdit(d.id)}>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleEdit(d.id)}
+              >
                 <Pencil size={16} />
               </Button>
-              <Button size="sm" variant="destructive" onClick={() => handleDelete(d.id)}>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => handleDelete(d.id)}
+              >
                 <Trash2 size={16} />
               </Button>
             </div>
           ),
         }));
-
         setCategory(rows);
       }
     } catch (error) {
       console.error("Failed to fetch categories:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,7 +124,9 @@ const SuperCategory = () => {
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Add Category</DialogTitle>
-            <DialogDescription>Fill in the details to add a new category.</DialogDescription>
+            <DialogDescription>
+              Fill in the details to add a new category.
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={addCategoryDB}>
             <div className="space-y-4 py-2">
@@ -129,7 +146,11 @@ const SuperCategory = () => {
                 <Label htmlFor="categoryImage">
                   Image<span className="text-red-500">*</span>
                 </Label>
-                <Input id="categoryImage" type="file" onChange={handleFileChange} />
+                <Input
+                  id="categoryImage"
+                  type="file"
+                  onChange={handleFileChange}
+                />
                 {uploading && <p>Uploading...</p>}
                 {publicId && (
                   <div className="flex justify-center pt-2">
@@ -150,8 +171,14 @@ const SuperCategory = () => {
           </form>
         </DialogContent>
       </Dialog>
-
-      <CustomTable columns={columns} data={category} />
+      {loading ? (
+        <div className="flex justify-center items-center h-40">
+          <Loader2 className="animate-spin mr-2 h-6 w-6 text-gray-500" />
+          <span className="text-gray-600">Loading categories...</span>
+        </div>
+      ) : (
+        <CustomTable columns={columns} data={category} />
+      )}
     </div>
   );
 };

@@ -40,16 +40,18 @@ model User {
 }
 
 model Address {
-  id           Int     @id @default(autoincrement())
+  id           Int      @id @default(autoincrement())
   city         String
   block        String
   post_office  String
   country      String
   landmark     String?
   pin_code     String
-  mobileNumber String  @default("")
-  User         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mobileNumber String   @default("")
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Product {
@@ -67,12 +69,15 @@ model Product {
   subcategoryId Int?
   sellerId      Int?
   createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model Category {
   id          Int           @id @default(autoincrement())
   name        String
   image       String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   Product     Product[]
   Subcategory Subcategory[]
 }
@@ -82,5 +87,7 @@ model Subcategory {
   name       String
   category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   Product    Product[]
 }

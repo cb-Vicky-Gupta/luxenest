@@ -7,3 +7,5 @@ export const ADD_SUB_CATEGORY = "/super/subcategory/add";
 export const UPDATE_SUB_CATEGORY = "/super/subcategory/update/";
 export const DELETE_SUB_CATEGORY = "/super/subcategory/delete/";
 
+//user list
+export const USERS_LIST = "/super/user-list";
